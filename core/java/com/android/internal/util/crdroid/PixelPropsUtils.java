@@ -428,15 +428,21 @@ public final class PixelPropsUtils {
     private static void setPropValue(String key, String value) {
         try {
             if (DEBUG) Log.d(TAG, "Defining prop " + key + " to " + value);
-            Class clazz = Build.class;
+            Class<?> clazz = Build.class;
             if (key.startsWith("VERSION.")) {
                 clazz = Build.VERSION.class;
                 key = key.substring(8);
             }
             Field field = clazz.getDeclaredField(key);
             field.setAccessible(true);
-            // Cast the value to int if it's an integer field, otherwise string.
-            field.set(null, field.getType().equals(Integer.TYPE) ? Integer.parseInt(value) : value);
+            // Determine the field type and parse the value accordingly.
+            if (field.getType().equals(Integer.TYPE)) {
+                field.set(null, Integer.parseInt(value));
+            } else if (field.getType().equals(Long.TYPE)) {
+                field.set(null, Long.parseLong(value));
+            } else {
+                field.set(null, value);
+            }
             field.setAccessible(false);
         } catch (Exception e) {
             Log.e(TAG, "Failed to set prop " + key, e);
