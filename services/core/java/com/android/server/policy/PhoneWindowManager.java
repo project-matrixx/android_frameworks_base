@@ -693,7 +693,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private Action mAssistLongPressAction;
     private Action mAppSwitchPressAction;
     private Action mAppSwitchLongPressAction;
-    private Action mCornerLongSwipeAction;
     private Action mThreeFingersSwipeAction;
 
     // support for activating the lock screen while the screen is on
@@ -1100,9 +1099,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(LineageSettings.System.getUriFor(
                     LineageSettings.System.KEY_APP_SWITCH_LONG_PRESS_ACTION), false, this,
-                    UserHandle.USER_ALL);
-            resolver.registerContentObserver(LineageSettings.System.getUriFor(
-                    LineageSettings.System.KEY_CORNER_LONG_SWIPE_ACTION), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(LineageSettings.System.getUriFor(
                     LineageSettings.System.KEY_THREE_FINGERS_SWIPE_ACTION), false, this,
@@ -3260,8 +3256,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final Resources res = mContext.getResources();
 
         // Initialize all assignments to sane defaults.
-        mCornerLongSwipeAction = Action.SEARCH;
-
         mMenuPressAction = Action.MENU;
 
         mMenuLongPressAction = Action.fromIntSafe(res.getInteger(
@@ -3330,10 +3324,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mAppSwitchLongPressAction = Action.fromSettings(resolver,
                 LineageSettings.System.KEY_APP_SWITCH_LONG_PRESS_ACTION,
                 mAppSwitchLongPressAction);
-
-        mCornerLongSwipeAction = Action.fromSettings(resolver,
-                LineageSettings.System.KEY_CORNER_LONG_SWIPE_ACTION,
-                mCornerLongSwipeAction);
 
         Action threeFingersSwipeAction = Action.fromSettings(resolver,
                 LineageSettings.System.KEY_THREE_FINGERS_SWIPE_ACTION,
