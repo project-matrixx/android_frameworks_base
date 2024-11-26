@@ -20,11 +20,11 @@
     <string name="url_copy_success">URL copiato con successo</string>
     <string name="url_copy_failed">Si è verificato un errore durante il caricamento del log su pasty</string>
     <!-- Pocket Lock -->
-    <string name="pocket_mode_title">Pocket mode is active</string>
-    <string name="pocket_mode_illustration_description">Illustration of phone in pocket</string>
+    <string name="pocket_mode_title">La modalità tasca è attiva</string>
+    <string name="pocket_mode_illustration_description">Illustrazione del telefono in modalità tasca</string>
     <string name="pocket_mode_instructions_header">Per utilizzare il telefono:</string>
-    <string name="pocket_mode_instruction_step1">1. Ensure the blue area (proximity sensor) shown above is unobstructed and free from dirt or dust.</string>
-    <string name="pocket_mode_instruction_step2">2. Press and hold the power button to exit pocket mode.</string>
+    <string name="pocket_mode_instruction_step1">1. Assicurarsi che l\'area blu (sensore di prossimità) mostrata sopra non sia ostruita e sia libera da sporcizia o polvere.</string>
+    <string name="pocket_mode_instruction_step2">2. Premere e tenere premuto il pulsante d\'accensione per uscire dalla modalità tasca.</string>
     <!-- App lock -->
     <string name="unlock_application">Sblocca <xliff:g id="label" example="Telegram">%1$s</xliff:g></string>
 </resources>

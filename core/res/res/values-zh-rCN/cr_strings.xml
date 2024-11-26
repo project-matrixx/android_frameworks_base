@@ -20,11 +20,11 @@
     <string name="url_copy_success">已成功复制链接</string>
     <string name="url_copy_failed">将日志上传到 Pasty 时出错</string>
     <!-- Pocket Lock -->
-    <string name="pocket_mode_title">Pocket mode is active</string>
-    <string name="pocket_mode_illustration_description">Illustration of phone in pocket</string>
+    <string name="pocket_mode_title">口袋检测已开启</string>
+    <string name="pocket_mode_illustration_description">口袋检测说明</string>
     <string name="pocket_mode_instructions_header">激活您的手机</string>
-    <string name="pocket_mode_instruction_step1">1. Ensure the blue area (proximity sensor) shown above is unobstructed and free from dirt or dust.</string>
-    <string name="pocket_mode_instruction_step2">2. Press and hold the power button to exit pocket mode.</string>
+    <string name="pocket_mode_instruction_step1">1. 确保上面显示的蓝色区域 ( 距离传感器 ) 不受遮挡，且没有泥土或灰尘。</string>
+    <string name="pocket_mode_instruction_step2">2. 按住电源按钮可退出口袋检测。</string>
     <!-- App lock -->
     <string name="unlock_application">解锁应用 <xliff:g id="label" example="Telegram">%1$s</xliff:g></string>
 </resources>
