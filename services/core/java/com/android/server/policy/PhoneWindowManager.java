@@ -669,7 +669,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private ActivityTaskManagerInternal.SleepTokenAcquirer mScreenOffSleepTokenAcquirer;
     boolean mMenuPressed;
     boolean mAssistPressed;
-    boolean mAppSwitchLongPressed;
     Intent mHomeIntent;
     Intent mCarDockIntent;
     Intent mDeskDockIntent;
@@ -1719,6 +1718,37 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, false,
                     "Back - Long Press");
             performKeyAction(mBackLongPressAction, event);
+        }
+    }
+
+    private void appSwitchPress() {
+        if (mAppSwitchPressAction != Action.NOTHING) {
+            if (mAppSwitchPressAction != Action.APP_SWITCH) {
+                cancelPreloadRecentApps();
+            }
+            long now = SystemClock.uptimeMillis();
+            KeyEvent event = new KeyEvent(now, now, KeyEvent.ACTION_DOWN,
+                    KeyEvent.KEYCODE_APP_SWITCH, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+                    KeyEvent.FLAG_FROM_SYSTEM, InputDevice.SOURCE_KEYBOARD);
+
+            performKeyAction(mAppSwitchPressAction, event);
+        }
+    }
+
+    private void appSwitchLongPress() {
+        if (!keyguardOn() && mAppSwitchLongPressAction != Action.NOTHING) {
+            if (mAppSwitchLongPressAction != Action.APP_SWITCH) {
+                cancelPreloadRecentApps();
+            }
+
+            long now = SystemClock.uptimeMillis();
+            KeyEvent event = new KeyEvent(now, now, KeyEvent.ACTION_DOWN,
+                    KeyEvent.KEYCODE_APP_SWITCH, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+                    KeyEvent.FLAG_FROM_SYSTEM, InputDevice.SOURCE_KEYBOARD);
+
+            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, false,
+                    "Recents - Long Press");
+            performKeyAction(mAppSwitchLongPressAction, event);
         }
     }
 
@@ -3105,6 +3135,35 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     /**
+     * Rule for single back key gesture.
+     */
+    private final class AppSwitchKeyRule extends SingleKeyGestureDetector.SingleKeyRule {
+        AppSwitchKeyRule() {
+            super(KeyEvent.KEYCODE_APP_SWITCH);
+        }
+
+        @Override
+        boolean supportLongPress() {
+            return mAppSwitchLongPressAction != Action.NOTHING;
+        }
+
+        @Override
+        int getMaxMultiPressCount() {
+            return 1;
+        }
+
+        @Override
+        void onPress(long downTime, int unusedDisplayId) {
+            appSwitchPress();
+        }
+
+        @Override
+        void onLongPress(long downTime) {
+            appSwitchLongPress();
+        }
+    }
+
+    /**
      * Rule for single stem primary key gesture.
      */
     private final class StemPrimaryKeyRule extends SingleKeyGestureDetector.SingleKeyRule {
@@ -3239,6 +3298,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mSingleKeyGestureDetector = SingleKeyGestureDetector.get(mContext, looper);
         mSingleKeyGestureDetector.addRule(new PowerKeyRule());
         mSingleKeyGestureDetector.addRule(new BackKeyRule());
+        mSingleKeyGestureDetector.addRule(new AppSwitchKeyRule());
     }
 
     private void updateKeyAssignments() {
@@ -4044,38 +4104,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
                 return true;
             case KeyEvent.KEYCODE_APP_SWITCH:
-                if (!keyguardOn) {
-                    if (down) {
-                        if (mAppSwitchPressAction == Action.APP_SWITCH
-                                || mAppSwitchLongPressAction == Action.APP_SWITCH) {
-                            preloadRecentApps();
-                        }
-                        if (repeatCount == 0) {
-                            mAppSwitchLongPressed = false;
-                        } else if (longPress) {
-                            if (!keyguardOn && mAppSwitchLongPressAction != Action.NOTHING) {
-                                if (mAppSwitchLongPressAction != Action.APP_SWITCH) {
-                                    cancelPreloadRecentApps();
-                                }
-                                performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, false,
-                                        "Recents - Long Press");
-                                performKeyAction(mAppSwitchLongPressAction, event);
-                                mAppSwitchLongPressed = true;
-                            }
-                        }
-                    } else {
-                        if (mAppSwitchLongPressed) {
-                            mAppSwitchLongPressed = false;
-                        } else {
-                            if (mAppSwitchPressAction != Action.APP_SWITCH) {
-                                cancelPreloadRecentApps();
-                            }
-                            if (!canceled) {
-                                performKeyAction(mAppSwitchPressAction, event);
-                            }
-                        }
-                    }
-                }
                 return true;
             case KeyEvent.KEYCODE_A:
                 if (firstDown && event.isMetaPressed()) {
@@ -5505,6 +5533,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     // Don't pass back press to app if we've already handled it via long press
                     if (mBackKeyHandled) {
                         result &= ~ACTION_PASS_TO_USER;
+                    }
+                }
+                break;
+            }
+
+            case KeyEvent.KEYCODE_APP_SWITCH: {
+                if (!keyguardOn()) {
+                    if (down) {
+                        if (mAppSwitchPressAction == Action.APP_SWITCH
+                                || mAppSwitchLongPressAction == Action.APP_SWITCH) {
+                            preloadRecentApps();
+                        }
                     }
                 }
                 break;
